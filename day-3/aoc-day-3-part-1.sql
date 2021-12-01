@@ -15,7 +15,7 @@ WITH
 	SELECT * FROM regexp_split_to_table(pg_read_file('/tmp/input'), '\n') AS t(i)
 ),
    map AS (
-	SELECT row_number() OVER () AS y, repeat(i, 200) line FROM frame -- 100 is just a guess
+	SELECT row_number() OVER () AS y, repeat(i, 200) line FROM frame -- 200 is just a guess
 ), sums AS (
 SELECT 
 	SUM(CASE substring(m.line FROM s1.x FOR 1) WHEN '#' THEN 1 ELSE 0 END) sum1,

@@ -2,28 +2,35 @@ open Batteries
 
 
 let process filename =
-  let filelines = File.lines_of filename in
-  Enum.map ( fun line -> int_of_string line ) filelines
+  File.lines_of filename
+  |> Enum.map (fun line -> int_of_string line)
+  |> List.of_enum
+;;
 
 
-(*
-let data = process "input"
-let rec permute = function
-  | [] -> []
-  | hd :: [] -> [[hd]]
-  | hd :: tl ->
-    List.fold_left (fun acc p -> acc @ 
-    let r = permute (hd :: acc) [] (lst @ tl) in
-    if tl <> [] then
-      r @ permute acc (hd :: lst) tl
-    else
-      r
-      *)
+let part1 filename =
+   let numbers = process filename in
+   List.cartesian_product numbers numbers
+   |> List.find_opt (fun (x, y) -> x + y == 2020)
+   |> Option.map (fun (x, y) -> x * y)
+;;
 
-let () =
-   let pairs = Enum.cartesian_product (process "input") (process "input")
-   in
-     let answer = Enum.find ( fun t -> (fst t) != (snd t) && (fst t) + (snd t) == 2020 ) pairs
-     in
-       print_int ((fst answer) * (snd answer));
-       print_newline ();
+let part2 filename =
+  let numbers = process filename in
+  let set = Set.of_list numbers in
+  numbers
+    |> List.cartesian_product numbers
+    |> List.find_opt (fun (x, y) -> (
+       Set.exists (fun z -> 2020 - x - y  == z) set))
+    |> Option.map (fun (x, y) -> (2020 - x - y) * x * y)
+;;
+
+
+let main =
+  let ans1 = part1 "input"
+  and ans2 = part2 "input" in
+    Option.may (fun x -> print_int x) ans1;
+    print_newline ();
+    Option.may (fun x -> print_int x) ans2;
+    print_newline ();
+;;
